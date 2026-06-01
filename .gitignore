@@ -201,6 +201,12 @@ Temporary Items
 # raw automated run output
 logs
 results/traces_automated/
+results/traces/
+results/traces_haiku/
+results/traces_ddc3_analyser/
+results/scope_eval_ddc3_analyser.csv
+results/scope_eval_task0.csv
+results/scope_guard_workspace_run.log
 results/scope_eval_haiku_qllm.csv
 plots
 tables
