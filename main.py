@@ -11,10 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# Modifications copyright 2026 Bartłomiej Czech.
+# Changes: added python-dotenv loading, --enable-scope-guard CLI flag, and
+# --suites argument for selective task-suite execution.
 
 from pathlib import Path
 
 import cyclopts
+from dotenv import load_dotenv
+
+load_dotenv()
 from agentdojo import attacks, benchmark, logging
 from agentdojo.task_suite import get_suite
 from openai.types.chat import ChatCompletionReasoningEffort
@@ -36,6 +43,7 @@ def main(
     eval_mode: MetadataEvalMode = MetadataEvalMode.NORMAL,
     q_llm: str | None = None,
     user_tasks: list[str] | None = None,
+    enable_scope_guard: bool = False,
 ):
     """Example usage of the defense.
 
@@ -55,6 +63,8 @@ def main(
         suites: which suites to run AgentDojo on (can be a list from `["workspace", "banking", "travel", "slack"]`)
         eval_mode: which eval mode to use when propagating dependencies.
         q_llm: what model to use as a quarantined llm. If None, the same as `model` is used.
+        enable_scope_guard: replace PrivilegedLLM with ScopedPrivilegedLLM, injecting
+            scoped_branch and decline builtins and the scope-guard system-prompt addendum.
     """
 
     attack_name = "important_instructions"
@@ -75,6 +85,7 @@ def main(
             ad_defense,
             eval_mode,
             q_llm,  # type: ignore
+            enable_scope_guard=enable_scope_guard,
         )
         suite = get_suite("v1.2", suite_name)
         attack = attacks.load_attack(attack_name, suite, tools_pipeline)

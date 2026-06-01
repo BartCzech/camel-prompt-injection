@@ -1,3 +1,9 @@
+# This file is derived from the CaMeL codebase (Copyright 2025 Google LLC),
+# licensed under the Apache License, Version 2.0.
+# Modifications copyright 2026 Bartłomiej Czech.
+# Changes: added conditional wiring for ScopedPrivilegedLLM via
+# make_tools_pipeline when --enable-scope-guard is set.
+
 import os
 import time
 
@@ -14,6 +20,7 @@ from camel.interpreter.interpreter import MetadataEvalMode
 from camel.pipeline_elements.anthropic_tool_filter import AnthropicLLMToolFilter
 from camel.pipeline_elements.privileged_llm import PrivilegedLLM
 from camel.pipeline_elements.replay_privileged_llm import PrivilegedLLMReplayer, UserInjectionTasksGetter
+from camel.scope_guard.pipeline import ScopedPrivilegedLLM, scoped_system_prompt_generator
 from camel.pipeline_elements.security_policies import (
     ADNoSecurityPolicyEngine,
     AgentDojoSecurityPolicyEngine,
@@ -96,6 +103,7 @@ def make_tools_pipeline(
     ad_defense: str | None,
     eval_mode: MetadataEvalMode,
     q_llm: KnownModelName | None,
+    enable_scope_guard: bool = False,
 ) -> agent_pipeline.AgentPipeline:
     if "google" in model:
         # vertexai.init(project=os.getenv("GCP_PROJECT"), location=os.getenv("GCP_LOCATION"))
@@ -189,16 +197,24 @@ def make_tools_pipeline(
         if eval_mode == MetadataEvalMode.STRICT:
             tools_pipeline.name += "+strict"
     else:
+        q_llm_model = q_llm or model
+        if enable_scope_guard:
+            privileged_llm_element = ScopedPrivilegedLLM(
+                llm,
+                ADNoSecurityPolicyEngine,
+                q_llm_model,
+                system_prompt_generator=scoped_system_prompt_generator,
+            )
+        else:
+            privileged_llm_element = PrivilegedLLM(
+                llm,
+                ADNoSecurityPolicyEngine,
+                q_llm_model,
+            )
         tools_pipeline = agent_pipeline.AgentPipeline(
             [
-                # Adds the user query to the history
                 agent_pipeline.InitQuery(),
-                # Generates the code and writes it to `extra_args`
-                PrivilegedLLM(
-                    llm,
-                    ADNoSecurityPolicyEngine,
-                    q_llm or model,
-                ),
+                privileged_llm_element,
             ]
         )
         # Used for logging
@@ -209,6 +225,8 @@ def make_tools_pipeline(
         else:
             tools_pipeline.name = f"{model.split(':')[1]}+camel"
 
+        if enable_scope_guard:
+            tools_pipeline.name += "+scope-guard"
         if q_llm:
             tools_pipeline.name += f"-q:{q_llm.split(':')[1]}"
 
