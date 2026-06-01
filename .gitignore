@@ -212,7 +212,8 @@ thesis_raw/
 thesis_backup_prephase2/
 results/task1_findings.md
 results/task2_findings.md
-results/scope_guard_comparison.md
+thesis_analysis/findings.md
+thesis_analysis/caveats.md
 
 # AI-assisted code generation
 CLAUDE.md
