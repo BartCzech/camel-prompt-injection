@@ -1,0 +1,63 @@
+This repository is a modified fork of the CaMeL research artifact.
+
+================================================================================
+Original work
+================================================================================
+
+CaMeL: "Defeating Prompt Injections by Design"
+Copyright 2025 Google LLC
+
+Originally developed by the CaMeL authors at Google, Google DeepMind, and
+ETH Zurich. The original source code is available at:
+
+    https://github.com/google-research/camel-prompt-injection
+
+Reference paper:
+    Debenedetti, Shumailov, Fan, Hayes, Carlini, Fabian, Kern, Shi, Terzis,
+    and Tramer. "Defeating Prompt Injections by Design."
+    arXiv:2503.18813 (2025). https://arxiv.org/abs/2503.18813
+
+    (Author list per the paper; the upstream code repository credits the same
+    authors with the exception of Terzis.)
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+these files except in compliance with the License. You may obtain a copy of the
+License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+The upstream LICENSE file is retained unmodified in this repository.
+
+================================================================================
+Modifications
+================================================================================
+
+Copyright 2026 Bartlomiej Czech
+
+The following files were added or modified as part of a master's thesis on
+scope-guarded branching for LLM agent security. This statement is provided to
+satisfy Section 4(b) of the Apache License (notice of changes).
+
+Added:
+    src/camel/scope_guard/        scope-guarded branching builtins, DDC-3 static
+                                  analyser, Q-LLM classifier, ScopedPrivilegedLLM
+                                  pipeline element
+    tests/scope_guard/            test suite for the above
+    tests/fast_test.py            integration smoke tests
+    tests/test_ddc3_analyser.py   unit tests for the DDC-3 analyser
+    run_scenarios.py              evaluation harness
+    generate_payloads.py          adversarial payload generator
+    analyse_scope_guard.py        results analyser
+    analyse_automated.py          automated evaluation analyser
+
+Modified:
+    main.py                       added --enable-scope-guard flag,
+                                  python-dotenv loading, --suites argument
+    src/camel/models.py           added conditional wiring for ScopedPrivilegedLLM
+
+These modifications are licensed under the Apache License, Version 2.0.
