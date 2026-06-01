@@ -159,7 +159,7 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+.idea/
 
 .vscode/
 
@@ -198,7 +198,22 @@ Temporary Items
 .apdisk
 .zed
 
+# raw automated run output
 logs
+results/traces_automated/
+results/scope_eval_haiku_qllm.csv
 plots
 tables
 count_tokens_qllm.py
+
+# .tex and .md files on the actual thesis
+improvements/
+thesis_raw/
+thesis_backup_prephase2/
+results/task1_findings.md
+results/task2_findings.md
+results/scope_guard_comparison.md
+
+# AI-assisted code generation
+CLAUDE.md
+.claude/
